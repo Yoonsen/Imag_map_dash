@@ -60,8 +60,8 @@ def make_map(significant_places, corpus_df, basemap, marker_size, center=None, z
     def create_popup_html(place, place_books):
         html = f"""
         <div style='width:500px'>
-            <h4>{place['name']}</h4>
-            <p><strong>Historisk navn:</strong> {place['token']}</p>
+            <h4>{place['token']}</h4>
+            <p><strong>Moderne navn:</strong> {place['name']}</p>
             <p><strong>{place['frekv']} forekomster i {len(place_books)} bøker</strong></p>
             <div style='max-height: 400px; overflow-y: auto;'>
                 <table style='width: 100%; border-collapse: collapse;'>
@@ -130,7 +130,7 @@ def make_map(significant_places, corpus_df, basemap, marker_size, center=None, z
                     radius=radius,
                     location=[place['latitude'], place['longitude']],
                     popup=folium.Popup(popup_html, max_width=500),
-                    tooltip=f"{place['name']}: {place['frekv']} forekomster i {book_count} bøker",
+                    tooltip=f"{place['token']}: {place['frekv']} forekomster i {book_count} bøker",
                     color=feature_colors[place['feature_class']],
                     fill=True,
                     fill_color=feature_colors[place['feature_class']],
@@ -209,64 +209,6 @@ titlelist = cached_data['lists']['titles']
 categorylist = cached_data['lists']['categories']
 
 
-# Layout
-# Define some CSS styles
-# Define some CSS styles
-# Define some CSS styles
-styles = {
-    'panel': {
-        'padding': '20px',
-        'backgroundColor': 'white',
-        'boxShadow': '0 2px 4px rgba(0,0,0,0.1)',
-        'marginBottom': '20px',
-        'borderRadius': '4px',
-        'fontFamily': '"Helvetica Neue", Helvetica, Arial, sans-serif'
-    },
-    'controlPanel': {
-        'width': '300px',
-        'height': '100vh',
-        'position': 'fixed',
-        'left': 0,
-        'top': 0,
-        'padding': '20px',
-        'backgroundColor': 'white',
-        'boxShadow': '2px 0 4px rgba(0,0,0,0.1)',
-        'overflowY': 'auto',
-        'fontFamily': '"Helvetica Neue", Helvetica, Arial, sans-serif'
-    },
-    'mainContent': {
-        'marginLeft': '320px',
-        'padding': '20px',
-        'width': 'calc(100% - 340px)',
-        'fontFamily': '"Helvetica Neue", Helvetica, Arial, sans-serif'
-    },
-    'mapContainer': {
-        'height': '700px',
-        'marginBottom': '20px',
-        'width': '100%'
-    },
-    'placesTable': {
-        'height': '400px',
-        'overflowY': 'auto',
-        'fontFamily': '"Helvetica Neue", Helvetica, Arial, sans-serif'
-    },
-    'dropdownStyle': {
-        'fontFamily': '"Helvetica Neue", Helvetica, Arial, sans-serif',
-        'fontSize': '14px'
-    },
-    'headerStyle': {
-        'fontFamily': '"Helvetica Neue", Helvetica, Arial, sans-serif',
-        'fontWeight': '500',
-        'fontSize': '24px',
-        'marginBottom': '20px'
-    },
-    'labelStyle': {
-        'fontFamily': '"Helvetica Neue", Helvetica, Arial, sans-serif',
-        'fontSize': '14px',
-        'fontWeight': '500',
-        'marginBottom': '5px'
-    }
-}
 
 # Then in your layout, update the components like this:
 # Layout
@@ -327,6 +269,7 @@ styles = {
 }
 
 # Layout with Tabs
+# Layout with Tabs
 app.layout = html.Div([
     # Left Control Panel
     html.Div([
@@ -355,41 +298,23 @@ app.layout = html.Div([
                 style={**styles['dropdownStyle'], 'marginBottom': '15px'}
             ),
             
-            html.Label("Author"),
+            html.Label("Author", style=styles['labelStyle']),
             dcc.Dropdown(
                 id='author-dropdown',
                 options=[{'label': author, 'value': author} for author in authorlist],
                 multi=True,
-                style={
-                    'marginBottom': '15px',
-                    'whiteSpace': 'normal',  # Enable text wrapping
-                    'lineHeight': '1.5',     # Improve line spacing
-                    'overflow': 'visible',   # Ensure the dropdown menu is visible
-                    'maxHeight': '300px',    # Limit dropdown height for scrolling
-                    'position': 'relative'   # Ensure proper placement of the dropdown
-                },
-                optionHeight=60  # Adjust height of each option for better readability
+                style={**styles['dropdownStyle'], 'marginBottom': '15px'}
             ),
-
             
-            html.Label("Work"),
+            html.Label("Work", style=styles['labelStyle']),
             dcc.Dropdown(
                 id='title-dropdown',
                 options=[{'label': title, 'value': title} for title in titlelist],
                 multi=True,
-                style={
-                    'marginBottom': '15px',
-                    'whiteSpace': 'normal',  # Enable text wrapping
-                    'lineHeight': '1.5',     # Improve line spacing
-                    'overflow': 'visible',   # Ensure the dropdown menu is visible
-                    'maxHeight': '300px',    # Limit dropdown height for scrolling
-                    'position': 'relative'   # Ensure proper placement of the dropdown
-                },
-                optionHeight=60  # Adjust height of each option for better readability
+                style={**styles['dropdownStyle'], 'marginBottom': '15px'}
             ),
-
             
-            html.Label("Places"),
+            html.Label("Places", style=styles['labelStyle']),
             dcc.Dropdown(
                 id='places-dropdown',
                 options=[{'label': place, 'value': place} 
@@ -399,46 +324,41 @@ app.layout = html.Div([
             ),
         ], style=styles['panel']),
         
+        # Map Controls
         html.Div([
             html.H3("Map Controls", style={'marginBottom': '15px'}),
             
-            html.Label("Max Books"),
-            html.Div([
-                dcc.Slider(
-                    id='max-books-slider',
-                    min=100,
-                    max=5000,
-                    value=400,
-                    step=100,
-                    marks={i: str(i) for i in [100, 1000, 2500, 5000]}
-                )
-            ], style={'marginBottom': '15px'}),
+            html.Label("Max Books", style=styles['labelStyle']),
+            dcc.Slider(
+                id='max-books-slider',
+                min=100,
+                max=5000,
+                value=400,
+                step=100,
+                marks={i: str(i) for i in [100, 1000, 2500, 5000]}
+            ),
             
-            html.Label("Max Places"),
-            html.Div([
-                dcc.Slider(
-                    id='max-places-slider',
-                    min=1,
-                    max=500,
-                    value=200,
-                    step=10,
-                    marks={i: str(i) for i in [1, 100, 250, 500]}
-                )
-            ], style={'marginBottom': '15px'}),
+            html.Label("Max Places", style=styles['labelStyle']),
+            dcc.Slider(
+                id='max-places-slider',
+                min=1,
+                max=500,
+                value=200,
+                step=10,
+                marks={i: str(i) for i in [1, 100, 250, 500]}
+            ),
             
-            html.Label("Marker Size"),
-            html.Div([
-                dcc.Slider(
-                    id='marker-size-slider',
-                    min=1,
-                    max=6,
-                    value=3,
-                    step=1,
-                    marks={i: str(i) for i in range(1, 11)}
-                )
-            ], style={'marginBottom': '15px'}),
+            html.Label("Marker Size", style=styles['labelStyle']),
+            dcc.Slider(
+                id='marker-size-slider',
+                min=1,
+                max=6,
+                value=3,
+                step=1,
+                marks={i: str(i) for i in range(1, 7)}
+            ),
             
-            html.Label("Base Map"),
+            html.Label("Base Map", style=styles['labelStyle']),
             dcc.Dropdown(
                 id='basemap-dropdown',
                 options=[{'label': bm, 'value': bm} for bm in BASEMAP_OPTIONS],
@@ -449,44 +369,87 @@ app.layout = html.Div([
         
         # Corpus Stats
         html.Div(id='corpus-stats', style=styles['panel']),
-        
     ], style=styles['controlPanel']),
-        
-    # Main Content Area with Tabs
+    
+    # Main Content Area
     html.Div([
         dcc.Tabs([
+            # Map View Tab
             dcc.Tab(label='Map View', children=[
-                # Map Container
                 html.Div([
-                    html.Iframe(
-                        id='map-iframe',
-                        srcDoc='',
-                        style={'width': '100%', 'height': '100%', 'border': 'none'}
-                    )
-                ], style=styles['mapContainer']),
-                
-                # Place Summary
-                html.Div([
-                    html.H3("Place Summary", style={'marginBottom': '15px'}),
-                    html.Div(id='place-summary', style=styles['panel'])
-                ],  style={**styles['panel'], 'width': '600px'})
+                    # Map Container
+                    html.Div([
+                        html.Iframe(
+                            id='map-iframe',
+                            srcDoc='',
+                            style={'width': '100%', 'height': '100%', 'border': 'none'}
+                        )
+                    ], style=styles['mapContainer']),
+                    
+                    # Place Summary
+                    html.Div([
+                        html.H3("Place Summary", style={'marginBottom': '15px'}),
+                        html.Div(id='place-summary', style=styles['panel'])
+                    ], style={**styles['panel'], 'width': '600px'})
+                ])
             ]),
             
+            # Heatmap Tab
             dcc.Tab(label='Heatmap', children=[
                 html.Div([
-                    # Heatmap-specific controls
+                    # Heatmap Controls
                     html.Div([
-                        html.Label("Heatmap Intensity"),
-                        dcc.Slider(
-                            id='heatmap-intensity-slider',
-                            min=1,
-                            max=10,
-                            value=5,
-                            marks={i: str(i) for i in range(1, 11)}
-                        )
-                    ], style=styles['panel']),
+                        html.Div([
+                            html.Label("Heatmap Intensity", style=styles['labelStyle']),
+                            dcc.Slider(
+                                id='heatmap-intensity-slider',
+                                min=1,
+                                max=10,
+                                value=3,
+                                marks={i: str(i) for i in range(1, 11, 2)}
+                            )
+                        ], style={'marginBottom': '15px'}),
+                        
+                        html.Div([
+                            html.Label("Point Radius", style=styles['labelStyle']),
+                            dcc.Slider(
+                                id='heatmap-radius-slider',
+                                min=5,
+                                max=30,
+                                value=15,
+                                step=5,
+                                marks={i: str(i) for i in [5, 10, 15, 20, 25, 30]}
+                            )
+                        ], style={'marginBottom': '15px'}),
+                        
+                        html.Div([
+                            html.Label("Blur Amount", style=styles['labelStyle']),
+                            dcc.Slider(
+                                id='heatmap-blur-slider',
+                                min=5,
+                                max=20,
+                                value=10,
+                                step=5,
+                                marks={i: str(i) for i in [5, 10, 15, 20]}
+                            )
+                        ], style={'marginBottom': '15px'}),
+                        
+                        html.Div([
+                            html.Label("Color Scale", style=styles['labelStyle']),
+                            dcc.Dropdown(
+                                id='heatmap-color-scheme',
+                                options=[
+                                    {'label': 'Blue-Lime-Red', 'value': 'blue-lime-red'},
+                                    {'label': 'Yellow-Red', 'value': 'yellow-red'},
+                                    {'label': 'Blue-Purple', 'value': 'blue-purple'}
+                                ],
+                                value='blue-lime-red',
+                                clearable=False
+                            )
+                        ])
+                    ], style={**styles['panel'], 'marginBottom': '15px'}),
                     
-                    # Heatmap container
+                    # Heatmap Display
                     html.Div([
                         html.Iframe(
                             id='heatmap-iframe',
@@ -499,11 +462,11 @@ app.layout = html.Div([
         ])
     ], style=styles['mainContent']),
     
-    # Store components
+    # Store Components
     dcc.Store(id='filtered-corpus'),
     dcc.Store(id='map-view-state', data=EUROPE_VIEW),
     dcc.Store(id='places-data'),
-    dcc.Store(id='store-selected-row'),
+    dcc.Store(id='store-selected-row')
 ])
 
 
@@ -739,9 +702,12 @@ def update_place_summary(filtered_corpus_json, max_books):
 @callback(
     Output('heatmap-iframe', 'srcDoc'),
     [Input('filtered-corpus', 'data'),
-     Input('heatmap-intensity-slider', 'value')]
+     Input('heatmap-intensity-slider', 'value'),
+     Input('heatmap-radius-slider', 'value'),
+     Input('heatmap-blur-slider', 'value'),
+     Input('heatmap-color-scheme', 'value')]
 )
-def generate_heatmap(filtered_corpus_json, heatmap_intensity):
+def generate_heatmap(filtered_corpus_json, intensity, radius, blur, color_scheme):
     try:
         if not filtered_corpus_json:
             raise PreventUpdate
@@ -749,38 +715,58 @@ def generate_heatmap(filtered_corpus_json, heatmap_intensity):
         # Convert filtered corpus back to DataFrame
         subkorpus = pd.read_json(filtered_corpus_json, orient='split')
         
-        # Convert int64 to regular int if needed
-        subkorpus = subkorpus.apply(lambda x: x.astype(str) if x.dtype == 'int64' else x)
+        # Convert dhlabid to standard Python int
+        subkorpus['dhlabid'] = subkorpus['dhlabid'].astype(int)
+        dhlabids = subkorpus['dhlabid'].tolist()  # Convert to regular Python list
         
-        # Get all places for the corpus (not sampled)
-        places = ti.geo_locations_corpus(subkorpus.dhlabid.unique())
+        # Get all places for the corpus
+        places = ti.geo_locations_corpus(dhlabids)
         places = places[places['rank']==1]
         
-        # Prepare heatmap data
-        # Convert int64 to float to avoid JSON serialization issues
-        heatmap_data = places.apply(
-            lambda row: [float(row['latitude']), float(row['longitude']), float(np.log1p(row['frekv']))], 
-            axis=1
-        ).tolist()
+        # Force conversion of numeric columns to float
+        places['latitude'] = places['latitude'].astype(float)
+        places['longitude'] = places['longitude'].astype(float)
+        places['frekv'] = places['frekv'].astype(float)
         
-        # Create heatmap
-        m = folium.Map(location=[55, 15], zoom_start=4, tiles='CartoDB.Positron')
+        # Create heatmap data directly without using apply
+        heatmap_data = []
+        for _, row in places.iterrows():
+            freq = float(row['frekv'])
+            if freq > 0:  # Only add points with frequency
+                heatmap_data.append([
+                    float(row['latitude']),
+                    float(row['longitude']),
+                    float(np.log1p(freq)) * float(intensity)
+                ])
+        
+        # Define color schemes
+        color_schemes = {
+            'blue-lime-red': {0.4: 'blue', 0.65: 'lime', 1: 'red'},
+            'yellow-red': {0.4: '#ffffb2', 0.65: '#fd8d3c', 1: '#bd0026'},
+            'blue-purple': {0.4: '#7fcdbb', 0.65: '#2c7fb8', 1: '#253494'}
+        }
+        
+        # Create map
+        m = folium.Map(
+            location=[55, 15],
+            zoom_start=4,
+            tiles='CartoDB.Positron'
+        )
         
         # Add heatmap layer
-        folium.plugins.HeatMap(
-            heatmap_data, 
-            radius=15 * heatmap_intensity,  # Adjust based on slider
-            blur=10,
-            max_zoom=1,
-            gradient={0.4: 'blue', 0.65: 'lime', 1: 'red'}
+        HeatMap(
+            heatmap_data,
+            radius=int(radius),
+            blur=int(blur),
+            gradient=color_schemes[color_scheme],
+            min_opacity=0.3
         ).add_to(m)
         
-        # Convert to HTML
         return folium_to_html(m)
+        
     except Exception as e:
         logging.error(f"Error generating heatmap: {e}")
         return f"Error generating heatmap: {str(e)}"
-
 
 if __name__ == '__main__':
     app.run_server(debug=True, host='0.0.0.0', port=8055)
