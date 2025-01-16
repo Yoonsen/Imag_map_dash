@@ -408,8 +408,8 @@ function(cluster) {{
                     color=feature_colors[place['feature_class']],
                     fill=True,
                     fill_color=feature_colors[place['feature_class']],
-                    fill_opacity=0.4,
-                    weight=2,
+                    fill_opacity=0.7,
+                    weight=1,
                     frequency=float(place['freq'])
                 )
                 marker.add_to(cluster_groups[place['feature_class']])
