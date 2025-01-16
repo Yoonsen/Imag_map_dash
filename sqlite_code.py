@@ -11,6 +11,8 @@ from dash.exceptions import PreventUpdate
 import tempfile
 import sqlite3
 import base64
+import os
+
 
 class DataLayer:
     def __init__(self, corpus_db="corpus.db", places_db="place_exploded.db"):
@@ -1218,7 +1220,11 @@ def main():
     print("About to register timeline callbacks...")  # Debug print
     register_timeline_callbacks(app, dl)
     print("Timeline callbacks registered")  # Debug print
-    app.run_server(debug=True, host='0.0.0.0')
+
+
 
 if __name__ == '__main__':
-    main()
+    app.run_server(
+        host='0.0.0.0',  # This is important - tells it to accept external connections
+        port=int(os.environ.get('PORT', 8050))  # Use Cloud Run's PORT env var, fallback to 8050
+    )
