@@ -11,7 +11,9 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
-COPY . ./
+COPY sqlite-code.py ./
+COPY place_exploded.db ./
+COPY corpus.db ./
 
 CMD python sqlite_code.py
 
