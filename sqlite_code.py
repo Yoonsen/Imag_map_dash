@@ -5,7 +5,6 @@ import numpy as np
 import folium
 import leafmap.foliumap as leafmap
 from folium.plugins import MarkerCluster, HeatMap
-import tools_imag as ti
 from urllib.parse import quote
 import json
 from dash.exceptions import PreventUpdate
