@@ -6,15 +6,17 @@ from dash.dependencies import Input, Output
 # Read `SCRIPT_NAME` from environment
 script_name = os.getenv("SCRIPT_NAME", "/")
 
-# Ensure `SCRIPT_NAME` ends with `/`
+# Ensure `SCRIPT_NAME` starts and ends with `/`
+if not script_name.startswith("/"):
+    script_name = "/" + script_name
 if not script_name.endswith("/"):
     script_name += "/"
 
 # Initialize Dash app
 app = dash.Dash(
     __name__,
-    requests_pathname_prefix=script_name,  # Ensures Dash assets load correctly
-    routes_pathname_prefix=script_name,    # Ensures Dash routes internal API correctly
+    requests_pathname_prefix=script_name,
+    routes_pathname_prefix=script_name,
     serve_locally=False
 )
 
