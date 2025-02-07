@@ -11,5 +11,8 @@ COPY hello_world.py ./
 # COPY place_exploded.db ./
 # COPY corpus.db ./
 # Expose the port
-EXPOSE 8050
-CMD python hello_world.py
+# Ensure the correct port is exposed
+ENV PORT=8050
+
+# Use Gunicorn to serve the Dash app
+CMD ["gunicorn", "-b", "0.0.0.0:8050", "hello_world:server"]
