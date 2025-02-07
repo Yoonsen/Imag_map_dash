@@ -5,4 +5,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY app.py .
 ENV PORT=8050
 ENV SCRIPT_NAME=/helloworld/
-CMD ["python", "app.py"]
+CMD ["sh", "-c", "gunicorn --workers=2 --timeout 90 --bind 0.0.0.0:${PORT} app:app"]
