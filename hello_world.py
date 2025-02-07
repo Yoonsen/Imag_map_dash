@@ -3,13 +3,25 @@ import dash
 from dash import dcc, html
 from dash.dependencies import Input, Output
 
-# Initialize Dash app **without manually setting pathname prefixes**
-app = dash.Dash(__name__, serve_locally=False)
+# Read `SCRIPT_NAME` from environment
+script_name = os.getenv("SCRIPT_NAME", "/")
+
+# Ensure `SCRIPT_NAME` ends with `/`
+if not script_name.endswith("/"):
+    script_name += "/"
+
+# Initialize Dash app
+app = dash.Dash(
+    __name__,
+    requests_pathname_prefix=script_name,  # Ensures Dash assets load correctly
+    routes_pathname_prefix=script_name,    # Ensures Dash routes internal API correctly
+    serve_locally=False
+)
 
 # Define Layout
 app.layout = html.Div([
     html.H1("Hello, Cloud Run!"),
-    html.P("This Dash app runs on Cloud Run."),
+    html.P(f"This Dash app runs on Cloud Run with prefix: {script_name}"),
     dcc.Input(id="input-text", type="text", placeholder="Enter text..."),
     html.Button("Submit", id="submit-btn", n_clicks=0),
     html.H3("You entered:"),
