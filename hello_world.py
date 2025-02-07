@@ -1,23 +1,13 @@
-import dash
-from dash import html
+from flask import Flask
+from flask_cors import CORS, cross_origin
 
-print("Starting app initialization...")
+app = Flask(__name__)
+CORS(app)
 
-app = dash.Dash(
-    __name__,  # Fixed syntax
-    serve_locally=True,
-    requests_pathname_prefix='/helloworld/',
-    assets_folder='assets',
-    assets_url_path='/helloworld/assets'
-)
-print("App initialized")
+@app.route('/')
+@cross_origin()
+def hello():
+   return "Hello World!"
 
-server = app.server
-
-@server.before_request
-def log_request():
-    print("Request received!")
-
-app.layout = html.Div([
-    html.H1("Hello, Cloud Run!")
-])
+if __name__ == '__main__':
+   app.run(host='0.0.0.0', port=8050)
