@@ -26,6 +26,10 @@ def update_output(n_clicks, text):
         return f"Hello there! Who are you {text}!"
     return "Waiting for input..."
 
+
+server = app.server
+
 # Run the app
 if __name__ == "__main__":
+
     app.run_server(host="0.0.0.0", port=8050, debug=True)
