@@ -9,9 +9,9 @@ from dash.dependencies import Input, Output
 # Initialize Dash app with correct path prefixes
 app = dash.Dash(
     __name__,
-    serve_locally=True  # Ensures static files are served properly
+    serve_locally=True,
+    requests_pathname_prefix='/helloworld/'
 )
-
 server = app.server
 
 # Set up app layout
