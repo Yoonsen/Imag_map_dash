@@ -5,7 +5,8 @@ app = dash.Dash(
     __name__,
     serve_locally=True,
     requests_pathname_prefix='/helloworld/',
-    assets_external_path='/helloworld/assets/'  # Add this
+    assets_folder='assets',  # Add this
+    assets_url_path='/helloworld/assets'  # And this
 )
 
 server = app.server
