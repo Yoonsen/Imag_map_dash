@@ -9,6 +9,7 @@ COPY hello_world.py ./
 
 # Expose the correct port for Cloud Run
 ENV PORT=8050
+ENV SCRIPT_NAME=/helloworld  # Set base path for the app
 
-# Use Gunicorn for Cloud Run
-CMD ["sh", "-c", "gunicorn --workers=2 --timeout 90 --log-level debug hello_world:server --bind 0.0.0.0:${PORT}"]
+# Run Gunicorn with SCRIPT_NAME support
+CMD ["sh", "-c", "gunicorn --workers=2 --timeout 90 --log-level debug --bind 0.0.0.0:${PORT} hello_world:server --env SCRIPT_NAME=${SCRIPT_NAME}"]
