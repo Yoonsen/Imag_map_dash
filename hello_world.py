@@ -36,4 +36,4 @@ def update_output(n_clicks, text):
 
 # Run locally
 if __name__ == "__main__":
-    app.run_server(host="0.0.0.0", port=8052, debug=True)
+    app.run_server(host="0.0.0.0", port=8050, debug=True)
