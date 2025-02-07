@@ -3,15 +3,17 @@ import dash
 from dash import dcc, html
 from dash.dependencies import Input, Output
 
-# Detect Cloud Run environment
+# Detect if we are running on Cloud Run
 IS_CLOUD_RUN = "K_SERVICE" in os.environ
-REQUEST_PREFIX = "/" if IS_CLOUD_RUN else ""
+
+# Set pathname prefix (important for Cloud Run)
+REQUEST_PREFIX = "/helloworld/" if IS_CLOUD_RUN else "/"
 
 # Initialize Dash app
 app = dash.Dash(
     __name__,
-    requests_pathname_prefix=REQUEST_PREFIX,
-    serve_locally=False,  # Important for Cloud Run
+    requests_pathname_prefix=REQUEST_PREFIX,  # Ensures Dash assets load correctly
+    serve_locally=False  # Forces Dash to serve static files correctly
 )
 
 # Enable reverse proxy settings for Cloud Run
@@ -38,8 +40,9 @@ def update_output(n_clicks, text):
         return f"Hello there! Who are you, {text}!"
     return "Waiting for input..."
 
-server = app.server  # Expose Flask server for Gunicorn
+# Expose Flask server for Gunicorn
+server = app.server
 
-# Run locally
+# Run locally (not in Cloud Run)
 if __name__ == "__main__":
     app.run_server(host="0.0.0.0", port=8050, debug=True)
